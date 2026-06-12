@@ -4,7 +4,7 @@
 #include <cstdlib>
 #include <ctime>
 
-
+//Base class Character that includes name, title, health, strength and selection
 class Character{
     protected: 
     std::string name;
@@ -27,6 +27,7 @@ class Character{
         health = h;
         strength = s;
     };
+    //Destructor
     virtual ~Character() {}
 
     
@@ -68,18 +69,19 @@ class Character{
         };
     };
 
-    
+    //abstract class that inherits to the daughter classes
     virtual int attack(Character& user, int option = 0) = 0;
 };
 
 
 
-
+//class Assassin which includes a personal attribute named crits, which calculates if the hit landed was a crit
 class Assassin: public Character{
     private:
     int crits = 30;
 
     public: 
+    //constructors
     Assassin(){
         name = "undefined";
         title = "undefined";
@@ -92,13 +94,17 @@ class Assassin: public Character{
         health = h;
         strength = s;
     };
+    //overrides Characters function and calculates the damage output
     int attack(Character& player, int option) override{
+        //srand(time(0)) is used at the start so when it uses rand() % 100 the result will change every time the program runs
+        //it keeps the randomization
         srand(time(0)); 
         int fdmg = strength;
         int fhealth = health;
         selection = option;
         //If option = 0, then it indicates the bot will be attacking
         if (option == 0){
+            //uses (rand() % 100) + 1 to generate a random number between 0 to 99, and adds 1
             int enemyopt = (rand() % 100) + 1;
             if (enemyopt <= 65){
                 option = 1;
@@ -107,7 +113,10 @@ class Assassin: public Character{
                 option = 2;
             }
         }
+        //saves the option selected
         selection = option;
+        //depending on the option the user inputs, or the bot randomly gets, it will calculate the damage output
+        //or if missrate is lesser than the value given, returns 0 to indicate no damage was given
         if (option == 1){
             int missrate = (rand() % 100) + 1;
             if (missrate < 10) { 
@@ -131,20 +140,20 @@ class Assassin: public Character{
                 }
             }
         }
+        //calculates the dmg, and returns it
         player.dmgd(fdmg);
         return fdmg;
     }
 };
 
 
-//ALL OF THESE CHARACTERS NEED WORK I DONT KNOW ANYTHING HELp
-
-
+//class Knight which includes a personal attribute named holy, which calculates whether the attack will heal or deal more damage
 class Knight: public Character{
     private:
     int holy = 50;
 
     public: 
+    //constructors
     Knight(){
         name = "undefined";
         title = "undefined";
@@ -157,7 +166,7 @@ class Knight: public Character{
         health = h;
         strength = s;
     };
-
+    //uses the same logic as the Assassin class to determine the option the bot chooses and the user
     int attack(Character& player, int option) override{
         srand(time(0));
         int fdmg = strength;
@@ -182,6 +191,8 @@ class Knight: public Character{
                 fdmg = strength;
             }
         }
+        //if option 2 was chosen, then it calculates the missrate first and if the attack doesn't miss, it calculates
+        //if holy is greater than holychance to see whether it deals more damage or heals
         else if(option == 2){
             int missrate = (rand() % 100) + 1;
             if (missrate < 40){
@@ -210,12 +221,13 @@ class Knight: public Character{
 
 
 
-
+//class Mage is more complicated than the other classes, it has a personal attribute called mana, which allows them to use spells
 class Mage: public Character{
     private:
     int mana = 150;
 
     public: 
+    //constructors
     Mage(){
         name = "undefined";
         title = "undefined";
@@ -229,9 +241,11 @@ class Mage: public Character{
         strength = s;
     };
 
+    //uses same attack as Assassin and Knight, but has various more options
     int attack(Character& player, int option) override{
         int fdmg = strength;
         int fhealth = health;
+        //the bot decides what option they will choose based on a percentage randomizer
         if(option == 0){
             int enemyopt = (rand() % 100) + 1;
             if(enemyopt <= 15){
@@ -247,6 +261,7 @@ class Mage: public Character{
                 option = 4;
             }
         }
+        //has 4 options to choose from, each dealing more damage but having bigger miss rate and costing more mana
         if (option == 1){
             int missrate = (rand() % 100) + 1;
             if (missrate < 5) { 
