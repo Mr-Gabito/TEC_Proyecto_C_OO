@@ -69,9 +69,7 @@ class Character{
     };
 
     
-    virtual int attack(Character& user, int option = 0){
-       return 0;
-    };   
+    virtual int attack(Character& user, int option = 0) = 0;
 };
 
 
