@@ -4,6 +4,7 @@
 #include <cstdlib>
 #include <ctime>
 
+//menu to print at the start of the code
 void menu(){
     std::cout << "Welcome to the ultimate challenge! Defeat all your enemies and as a reward you'll receive a cake of your choosing!\n" << std::endl;
     std::cout << "Select your character: " << std::endl;
@@ -15,7 +16,12 @@ void menu(){
 };
 
 int main(){
+    //srand to get fully randomized values
     srand(time(0));
+    //bats and res to gain access to their values
+    //option and optionn to get the options selected
+    //death_p to decide whether the player dies or not
+    //playername and playertitle to allow the user to input
     BattleSim bats;
     roundsim res;
     int option = 0;
@@ -23,32 +29,38 @@ int main(){
     bool death_p = false;
     std::string playername = "undefined";
     std::string playertitle = "undefined";
-
+    //makes player a null character to point to nothing 
     Character* player = nullptr;
 
     menu();
+    //the user inputs the optionn, if its 4, it exits the code
     std::cin >> optionn;
 
     if (optionn == 4){
         std::cout << "Bye bye!" << std::endl;
         return 0;
     }
-
+    //user inputs their name and title
     std::cout << "What is your name? " << std::endl;
     std::cin >> playername;
     std::cout << "What title do you choose? " << std::endl;
     std::cin >> playertitle;
-
+    //if the option is 1, 2, or 3, initializes a switch to get different results
     switch(optionn){
 
     case 1:{
+        //creates a new player Mage and makes a for loop to initialize the battle simulation based on how many enemies are in the vector
         Character* player = new Mage(playername, playertitle, 100, 5);
         for(Character* enemy : bats.enemies){
+            //prints out the enemies name and title and the players
             std::cout << enemy -> get_name() << enemy -> get_title() << std::endl;
             std::cout << "-----------VS-----------" << std::endl;
             std::cout << playername << " " << playertitle << std::endl;
+            //initializes a round 1 at the beginning
             int round = 1;
+            //resets the players health
             player -> set_health(100);
+            //while the player and the enemy both have health the simulation will continue until one dies
             while(player -> get_health() > 0 && enemy -> get_health() > 0){
                 std::cout << "Round " << round << std::endl;
                 std::cout << "Battle menu:\n" << std::endl;
@@ -58,9 +70,9 @@ int main(){
                 std::cout << "4. Light spear (+60 damage, 65 mana, 60% miss rate)" << std::endl;
                 int option = 0;
                 std::cin >> option;
-
+                //runs the simulation
                 roundsim res = bats.figthing(player, enemy, option);
-
+                //based on the option selected, the user will output the following and will print out the damage dealt
                 if (res.player_dmging > 0){
                     if (option == 1){
                         std::cout << "You think spells are useless anyway so you punch your enemy!" << std::endl;
@@ -79,6 +91,7 @@ int main(){
                         std::cout << "Damage dealt: " << res.player_dmging << std::endl;
                     }
                 }
+                //if the result of the player_dmging is less than 0, it will print out a randomized miss message
                 else{
                     int miss = (rand() % 3) + 1;
                     if (miss == 1){
@@ -91,15 +104,18 @@ int main(){
                         std::cout << "...I won't even say anything that was embarrassing. MISSED!" << std::endl;
                     }
                 }
-
+                //if the enemy is defeated, it will get the name and title to print out their defeat
                 if (res.dead_enemy){
                     std::cout << enemy -> get_name() << enemy -> get_title() << " was defeated!" << std::endl;
                     break;
                 }
                 
                 //ENEMY PRINTS
+                //based on the specific enemy, if they miss they will print out a randomized miss message as well
+                //by checking the name of the enemy they will have different misss messages
                 if (res.enemy_dmging == 0){
                     int miss = (rand() % 3) + 1;
+                    //mage miss messages
                     if (enemy -> get_name() == "Frieren"){
                         if (miss == 1){
                             std::cout << "The enemy looks at you with malicious intent, then is distracted by a butterfly. MISSED!" << std::endl;
@@ -111,6 +127,7 @@ int main(){
                             std::cout << "The enemy launches a spell at you, but a bird intercepts it and dies! MISSED!" << std::endl;
                         }
                     }
+                    //knight miss messages
                     else if (enemy -> get_name() == "Edward"){
                         if (miss == 1){
                             std::cout << "The enemy senses you want to win lets gives you their turn. MISSED!" << std::endl;
@@ -122,6 +139,7 @@ int main(){
                             std::cout << "The enemy points a finger at you while yelling for their goddess to hit you! MISSED!" << std::endl;
                         }
                     }
+                    //assassin miss message
                     else if (enemy -> get_name() == "Ezio"){
                         if (miss == 1){
                             std::cout << "The enemy launches daggers at you, but you deflect them all. MISSED!" << std::endl;
@@ -134,23 +152,27 @@ int main(){
                         }
                     }
                 }
-
+                //if the player dies, prints it out and sets death_p to true to make sure at the end it will print You lose! and breaks the loop
                 if (res.dead_player){
                     std::cout << playername << " " << playertitle << " was defeated!" << std::endl;
                     death_p = true;
                     break;
                 }
 
-
+                //if neither dies, shows the enemy and your health and makes the round number increase
                 std::cout << "Health: " << player -> get_health() << std::endl;
                 std::cout << "Enemy health: " << enemy -> get_health() << std::endl;
                 round++;
             }
+            //if death_p is true, it breaks the loop
             if (death_p){
                 break;
             }
             
         }
+        //if death_p is false, after killing every enemy it will print You win!
+        //else it will print You lose!
+        //after everything it will delete the player and break out of the switch
         if (!death_p){
             std::cout << "You win! Congratulations!" << std::endl;
             std::cout << "The cake was a lie" << std::endl;
@@ -162,6 +184,8 @@ int main(){
         break;
     }
 
+    //it will do the exact same thing as the Mage but will have less options, deletes the player then breaks
+    //makes a new Knight
     case 2:{
         Character* player = new Knight(playername, playertitle, 250, 15);
         for(Character* enemy : bats.enemies){
@@ -271,6 +295,8 @@ int main(){
         delete player;
         break;
     }
+
+    //same for the new Assassin player, it will do the same process specific to the options of the Assassin then deletes the player and breaks
     case 3:{
         Character* player = new Assassin(playername, playertitle, 150, 20);
         for(Character* enemy : bats.enemies){
@@ -381,5 +407,6 @@ int main(){
         break;
     }
     }
+//exits the program
 return 0;
 }
